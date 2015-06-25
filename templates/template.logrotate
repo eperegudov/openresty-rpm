@@ -1,0 +1,13 @@
+_LOGDIR_/*.log {
+        daily
+        missingok
+        rotate 52
+        compress
+        delaycompress
+        notifempty
+        create 640 _USER_ _LOGGROUP_
+        sharedscripts
+        postrotate
+                [ -f _PIDFILE_ ] && kill -USR1 `cat _PIDFILE_`
+        endscript
+}
