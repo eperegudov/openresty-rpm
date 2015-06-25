@@ -1,0 +1,16 @@
+[Unit]
+Description= _NAME_ - fast web app server by extending nginx
+Documentation=http://openresty.org/
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+PIDFile=_PIDFILE_
+ExecStartPre=_SBINFILE_ -t -c _CONFFILE_
+ExecStart=_SBINFILE_ -c _CONFFILE_
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s QUIT $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
