@@ -41,6 +41,7 @@ openresty-rpm
 To build the RPM, you'll first need to set up your build environment. Typically, this means creating some directories and installing some packages:
 
 * Install development tools for RPM (`rpmdevtools`,  `rpm-build`) and C\C++ (`make`, `gcc`, `gcc-c++`):
+
     ```
     	sudo yum -y install rpmdevtools rpm-build make gcc gcc-c++ 
     ```
