@@ -65,7 +65,7 @@ Do it manually by building the RPM as a non-root user from your home directory:
 	
 * Download remote source files with `spectool`. Spectool may fail if your distribution has an older version of `curl` - if so, use `wget` instead:
     ```
-	spectool -g -R rpmbuild/SPECS/openresty.spec
+	spectool -g -R ~/rpmbuild/SPECS/openresty.spec
     ```
     or
     ```
