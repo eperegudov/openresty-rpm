@@ -42,14 +42,14 @@ To build the RPM, you'll first need to set up your build environment. Typically,
 
 * Install development tools for RPM (`rpmdevtools`,  `rpm-build`) and C\C++ (`make`, `gcc`, `gcc-c++`):
     ```
-    sudo yum -y install rpmdevtools rpm-build make gcc gcc-c++ 
+    	sudo yum -y install rpmdevtools rpm-build make gcc gcc-c++ 
     ```
 
 Do it manually by building the RPM as a non-root user from your home directory:
 	
 * Set up your rpmbuild directory tree:
     ```
-    rpmdev-setuptree
+	rpmdev-setuptree
     ```
 
 * Download the spec file:
@@ -64,8 +64,10 @@ Do it manually by building the RPM as a non-root user from your home directory:
 	
 * Download remote source files with `spectool`. Spectool may fail if your distribution has an older version of `curl` - if so, use `wget` instead:
     ```
-    spectool -g -R rpmbuild/SPECS/openresty.spec
-	or
+	spectool -g -R rpmbuild/SPECS/openresty.spec
+    ```
+    or
+    ```
 	cd ~/rpmbuild/SOURCES/
 	wget http://openresty.org/download/ngx_openresty-{version}.tar.gz
 	wget https://github.com/joniknsk/openresty-rpm/archive/master.zip
@@ -78,7 +80,7 @@ Do it manually by building the RPM as a non-root user from your home directory:
 
 * Then just build the RPM:
     ```
-    rpmbuild -ba ~/rpmbuild/SPECS/openresty.spec
+	rpmbuild -ba ~/rpmbuild/SPECS/openresty.spec
     ```
 
 ## Result
@@ -86,8 +88,8 @@ Do it manually by building the RPM as a non-root user from your home directory:
 The RPM will be in `~/rpmbuild/RPMS/{platform}/` and the SRPM will be in `~/rpmbuild/SRPMS/`.
 
 * If you need binary package only, run `rpmbuild` with `-bb` arguments:
-	```
-    rpmbuild -bb ~/rpmbuild/SPECS/openresty.spec
+    ```
+	rpmbuild -bb ~/rpmbuild/SPECS/openresty.spec
     ```
 
 ## Run
