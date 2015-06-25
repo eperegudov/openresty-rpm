@@ -1,0 +1,152 @@
+#!/bin/sh
+#
+# _NAME_ Startup script for OpenResty
+#
+# chkconfig: - 85 15
+# processname: nginx
+# config: _CONFFILE_
+# config: _ENVFILE_
+# pidfile: _PIDFILE_
+# description: _NAME_ - fast web app server by extending nginx
+#
+### BEGIN INIT INFO
+# Provides: _NAME_
+# Required-Start: $local_fs $remote_fs $network
+# Required-Stop: $local_fs $remote_fs $network
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: start and stop _NAME_
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+if [ -L $0 ]; then
+    initscript=`/bin/readlink -f $0`
+else
+    initscript=$0
+fi
+
+sysconfig=`/bin/basename $initscript`
+
+if [ -f /etc/sysconfig/$sysconfig ]; then
+    . /etc/sysconfig/$sysconfig
+fi
+
+nginx=${NGINX-_SBINFILE_}
+prog=`/bin/basename $nginx`
+conffile=${CONFFILE-_CONFFILE_}
+lockfile=${LOCKFILE-_LOCKFILE_}
+pidfile=${PIDFILE-_PIDFILE_}
+SLEEPMSEC=${SLEEPMSEC-200000}
+UPGRADEWAITLOOPS=${UPGRADEWAITLOOPS-5}
+RETVAL=0
+
+start() {
+    echo -n $"Starting $prog: "
+
+    daemon --pidfile=${pidfile} ${nginx} -c ${conffile}
+    RETVAL=$?
+    echo
+    [ $RETVAL = 0 ] && touch ${lockfile}
+    return $RETVAL
+}
+
+stop() {
+    echo -n $"Stopping $prog: "
+    killproc -p ${pidfile} ${prog}
+    RETVAL=$?
+    echo
+    [ $RETVAL = 0 ] && rm -f ${lockfile} ${pidfile}
+}
+
+reload() {
+    echo -n $"Reloading $prog: "
+    killproc -p ${pidfile} ${prog} -HUP
+    RETVAL=$?
+    echo
+}
+
+upgrade() {
+    oldbinpidfile=${pidfile}.oldbin
+
+    configtest -q || return
+    echo -n $"Starting new master $prog: "
+    killproc -p ${pidfile} ${prog} -USR2
+    echo
+
+    for i in `/usr/bin/seq $UPGRADEWAITLOOPS`; do
+        /bin/usleep $SLEEPMSEC
+        if [ -f ${oldbinpidfile} -a -f ${pidfile} ]; then
+            echo -n $"Graceful shutdown of old $prog: "
+            killproc -p ${oldbinpidfile} ${prog} -QUIT
+            RETVAL=$?
+            echo
+            return
+        fi
+    done
+
+    echo $"Upgrade failed!"
+    RETVAL=1
+}
+
+configtest() {
+    if [ "$#" -ne 0 ] ; then
+        case "$1" in
+            -q)
+                FLAG=$1
+                ;;
+            *)
+                ;;
+        esac
+        shift
+    fi
+    ${nginx} -t -c ${conffile} $FLAG
+    RETVAL=$?
+    return $RETVAL
+}
+
+rh_status() {
+    status -p ${pidfile} ${nginx}
+}
+
+# See how we were called.
+case "$1" in
+    start)
+        rh_status >/dev/null 2>&1 && exit 0
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        rh_status
+        RETVAL=$?
+        ;;
+    restart)
+        configtest -q || exit $RETVAL
+        stop
+        start
+        ;;
+    upgrade)
+        rh_status >/dev/null 2>&1 || exit 0
+        upgrade
+        ;;
+    condrestart|try-restart)
+        if rh_status >/dev/null 2>&1; then
+            stop
+            start
+        fi
+        ;;
+    force-reload|reload)
+        reload
+        ;;
+    configtest)
+        configtest
+        ;;
+    *)
+        echo $"Usage: $prog {start|stop|restart|condrestart|try-restart|force-reload|upgrade|reload|status|help|configtest}"
+        RETVAL=2
+esac
+
+exit $RETVAL
