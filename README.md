@@ -85,18 +85,20 @@ Do it manually by building the RPM as a non-root user from your home directory:
     ```
 
 `QA_RPATHS=$[ 0x0002 ]` is needed to disable RPATH-checking (see [notes](http://fedoraproject.org/wiki/Packaging:Guidelines#Beware_of_Rpath)) or another way is remove call the `/usr/lib/rpm/check-rpaths` in your `~/.rpmmacros` file:
-	```
+
+```
 	%__arch_install_post   /usr/lib/rpm/check-rpaths   /usr/lib/rpm/check-buildroot
-	```
+```
 
 ## Result
 
 The RPM will be in `~/rpmbuild/RPMS/{platform}/` and the SRPM will be in `~/rpmbuild/SRPMS/`.
 
 * If you need binary package only, run `rpmbuild` with `-bb` arguments:
-	```
+
+    ```
 	QA_RPATHS=$[ 0x0002 ] rpmbuild -bb ~/rpmbuild/SPECS/openresty.spec
-	```
+    ```
 
 ## Run
 
