@@ -1,0 +1,5 @@
+# Configuration file for the _NAME_ service
+NGINX=_SBINFILE_
+CONFFILE=_CONFFILE_
+LOCKFILE=_LOCKFILE_
+PIDFILE=_PIDFILE_
