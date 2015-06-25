@@ -33,10 +33,10 @@ Notes:
 * When you try to build on el5, must enable the EPEL repository
 * Not tested on Fedora (as sane as I could test for)
 
-## Build
-
 openresty-rpm
 =============
+
+## Build
 
 To build the RPM, you'll first need to set up your build environment. Typically, this means creating some directories and installing some packages:
 
